@@ -1,0 +1,173 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String       @id @default(cuid())
+  email            String       @unique
+  username         String       @unique
+  passwordHash     String
+  displayName      String
+  avatarUrl        String?
+  bio              String?
+  fitnessProvider  String?
+  fitAccessToken   String?
+  fitRefreshToken  String?
+  totalEarned      Float        @default(0)
+  totalLost        Float        @default(0)
+  winStreak        Int          @default(0)
+  bestStreak       Int          @default(0)
+  totalChallenges  Int          @default(0)
+  totalWins        Int          @default(0)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  wallet           Wallet?
+  bets             Bet[]
+  stepLogs         StepLog[]
+  sentFriends      Friendship[] @relation("FriendshipSender")
+  receivedFriends  Friendship[] @relation("FriendshipReceiver")
+  notifications    Notification[]
+  refreshTokens    RefreshToken[]
+  groupMemberships GroupMember[]
+}
+
+model Wallet {
+  id             String        @id @default(cuid())
+  userId         String        @unique
+  balance        Float         @default(100)
+  totalDeposit   Float         @default(0)
+  totalWithdraw  Float         @default(0)
+  user           User          @relation(fields: [userId], references: [id])
+  transactions   Transaction[]
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  walletId    String
+  type        String
+  amount      Float
+  description String
+  meta        String?
+  createdAt   DateTime @default(now())
+  wallet      Wallet   @relation(fields: [walletId], references: [id])
+}
+
+model Challenge {
+  id           String   @id @default(cuid())
+  type         String   @default("global")
+  title        String
+  description  String?
+  stepGoal     Int      @default(10000)
+  betAmount    Float
+  minBet       Float    @default(1)
+  maxBet       Float    @default(100)
+  platformFee  Float    @default(0.05)
+  startTime    DateTime
+  endTime      DateTime
+  status       String   @default("open")
+  totalPool    Float    @default(0)
+  winnerPool   Float    @default(0)
+  loserPool    Float    @default(0)
+  winnersCount Int      @default(0)
+  losersCount  Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  bets         Bet[]
+  groupId      String?
+  group        Group?   @relation(fields: [groupId], references: [id])
+}
+
+model Bet {
+  id            String    @id @default(cuid())
+  userId        String
+  challengeId   String
+  amount        Float
+  status        String    @default("active")
+  stepsAchieved Int       @default(0)
+  goalMet       Boolean   @default(false)
+  payout        Float?
+  profitLoss    Float?
+  settledAt     DateTime?
+  createdAt     DateTime  @default(now())
+  user          User      @relation(fields: [userId], references: [id])
+  challenge     Challenge @relation(fields: [challengeId], references: [id])
+
+  @@unique([userId, challengeId])
+}
+
+model StepLog {
+  id       String   @id @default(cuid())
+  userId   String
+  date     String
+  steps    Int
+  source   String
+  verified Boolean  @default(false)
+  proofUrl String?
+  syncedAt DateTime @default(now())
+  user     User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, date])
+}
+
+model Group {
+  id          String        @id @default(cuid())
+  name        String
+  description String?
+  inviteCode  String        @unique @default(cuid())
+  createdBy   String
+  maxMembers  Int           @default(20)
+  isPrivate   Boolean       @default(false)
+  createdAt   DateTime      @default(now())
+  members     GroupMember[]
+  challenges  Challenge[]
+}
+
+model GroupMember {
+  id       String   @id @default(cuid())
+  groupId  String
+  userId   String
+  role     String   @default("member")
+  joinedAt DateTime @default(now())
+  group    Group    @relation(fields: [groupId], references: [id])
+  user     User     @relation(fields: [userId], references: [id])
+
+  @@unique([groupId, userId])
+}
+
+model Friendship {
+  id         String   @id @default(cuid())
+  senderId   String
+  receiverId String
+  status     String   @default("pending")
+  createdAt  DateTime @default(now())
+  sender     User     @relation("FriendshipSender", fields: [senderId], references: [id])
+  receiver   User     @relation("FriendshipReceiver", fields: [receiverId], references: [id])
+
+  @@unique([senderId, receiverId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  title     String
+  body      String
+  read      Boolean  @default(false)
+  meta      String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
