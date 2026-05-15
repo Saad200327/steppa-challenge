@@ -1,28 +1,109 @@
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Oswald:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
-  body { background: #0a0a0f; color: #f0f0f8; font-family: 'DM Mono', monospace; }
+:root {
+  --bg: #0a0a0f;
+  --surface: #12121a;
+  --surface-elevated: #1a1a26;
+  --border: #2a2a3d;
+  --green: #00ff88;
+  --red: #ff3b5c;
+  --yellow: #ffb800;
+  --blue: #4d9eff;
+  --text: #f0f0f8;
+  --text-muted: #7a7a9a;
 }
 
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body, #root {
+  min-height: 100vh;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--surface); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #3a3a5d; }
+
+/* Animations */
+@keyframes pulse-red {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255,59,92,0.4); }
+  50% { box-shadow: 0 0 0 12px rgba(255,59,92,0); }
+}
+@keyframes pulse-green {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0,255,136,0.3); }
+  50% { box-shadow: 0 0 0 10px rgba(0,255,136,0); }
+}
+@keyframes ticker {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+@keyframes glow {
+  0%, 100% { text-shadow: 0 0 10px rgba(0,255,136,0.5); }
+  50% { text-shadow: 0 0 25px rgba(0,255,136,0.9), 0 0 50px rgba(0,255,136,0.5); }
+}
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-pulse-red { animation: pulse-red 2s infinite; }
+.animate-pulse-green { animation: pulse-green 2s infinite; }
+.animate-ticker { animation: ticker 20s linear infinite; }
+.animate-glow { animation: glow 2s ease-in-out infinite; }
+.animate-fade-in-up { animation: fadeInUp 0.5s ease forwards; }
+
+/* Component classes */
 @layer components {
   .btn {
-    @apply inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium text-sm transition-all duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 cursor-pointer text-sm;
   }
   .btn-primary {
-    @apply bg-steppa-green text-black hover:opacity-90 active:scale-95;
+    @apply bg-green-500 text-black hover:bg-green-400 active:scale-95;
+    background-color: #00ff88;
+    color: #000;
+  }
+  .btn-primary:hover { background-color: #00e87a; }
+  .btn-danger {
+    background-color: #ff3b5c;
+    color: #fff;
+    @apply hover:opacity-90 active:scale-95;
   }
   .btn-ghost {
-    @apply border border-steppa-border text-steppa-muted hover:border-steppa-green hover:text-white;
+    @apply border border-[#2a2a3d] text-[#f0f0f8] hover:bg-[#1a1a26] active:scale-95;
+  }
+  .btn-outline {
+    @apply border border-[#00ff88] text-[#00ff88] hover:bg-[#00ff88] hover:text-black active:scale-95;
+  }
+  .card {
+    @apply bg-[#12121a] border border-[#2a2a3d] rounded-xl p-4;
+  }
+  .card-elevated {
+    @apply bg-[#1a1a26] border border-[#2a2a3d] rounded-xl p-4;
   }
   .input {
-    @apply w-full bg-steppa-elevated border border-steppa-border rounded-lg px-3 py-2 text-white text-sm placeholder-steppa-muted focus:outline-none focus:border-steppa-green transition-colors;
+    @apply w-full bg-[#0a0a0f] border border-[#2a2a3d] rounded-lg px-3 py-2 text-[#f0f0f8] text-sm outline-none transition-all;
+    font-family: 'DM Mono', monospace;
   }
+  .input:focus { border-color: #00ff88; box-shadow: 0 0 0 2px rgba(0,255,136,0.15); }
+  .input::placeholder { color: #7a7a9a; }
   .label {
-    @apply block text-steppa-muted text-xs uppercase tracking-widest mb-1.5;
+    @apply block text-xs text-[#7a7a9a] mb-1 uppercase tracking-wider;
+  }
+  .badge {
+    @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium;
+  }
+  .stat-number {
+    font-family: 'Oswald', sans-serif;
+    @apply text-2xl font-bold;
   }
 }

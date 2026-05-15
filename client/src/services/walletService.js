@@ -1,7 +1,16 @@
-import api from './api'
-export const walletService = {
-  get: () => api.get('/wallet'),
-  deposit: (d) => api.post('/wallet/deposit', d),
-  withdraw: (d) => api.post('/wallet/withdraw', d),
-  getTransactions: (p) => api.get('/wallet/transactions', { params: p }),
-}
+import api from './api';
+
+export const getWallet = async () => {
+  const { data } = await api.get('/wallet');
+  return data;
+};
+
+export const deposit = async (amount) => {
+  const { data } = await api.post('/wallet/deposit', { amount });
+  return data;
+};
+
+export const getTransactions = async () => {
+  const { data } = await api.get('/wallet/transactions');
+  return data;
+};

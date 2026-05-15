@@ -17,17 +17,16 @@ export default {
       },
       fontFamily: {
         display: ['Syne', 'sans-serif'],
-        body: ['DM Mono', 'monospace'],
         mono: ['DM Mono', 'monospace'],
+        stat: ['Oswald', 'sans-serif'],
       },
       animation: {
-        'pulse-border': 'pulse-border 1.5s ease-in-out infinite',
-      },
-      keyframes: {
-        'pulse-border': {
-          '0%, 100%': { borderColor: 'rgba(255,59,92,0.4)' },
-          '50%': { borderColor: 'rgba(255,59,92,1)' },
-        },
+        'pulse-red': 'pulse-red 2s infinite',
+        'pulse-green': 'pulse-green 2s infinite',
+        'ticker': 'ticker 20s linear infinite',
+        'glow': 'glow 2s ease-in-out infinite',
+        'fade-in-up': 'fadeInUp 0.5s ease forwards',
+        'spin-slow': 'spin 3s linear infinite',
       },
     },
   },

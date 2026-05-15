@@ -1,40 +1,33 @@
-import { format, formatDistanceToNow, isToday, isYesterday } from 'date-fns'
+import { format, formatDistanceToNow } from 'date-fns';
 
-export function formatCurrency(amount) {
-  if (amount === null || amount === undefined) return '0.00'
-  return Number(amount).toFixed(2)
-}
-export function formatSteps(steps) {
-  if (!steps) return '0'
-  return Number(steps).toLocaleString()
-}
-export function formatDate(date) {
-  if (!date) return ''
-  const d = new Date(date)
-  if (isToday(d)) return 'Today'
-  if (isYesterday(d)) return 'Yesterday'
-  return format(d, 'MMM d, yyyy')
-}
-export function formatTime(date) {
-  if (!date) return ''
-  return format(new Date(date), 'HH:mm')
-}
-export function formatRelativeTime(date) {
-  if (!date) return ''
-  return formatDistanceToNow(new Date(date), { addSuffix: true })
-}
-export function formatCountdown(ms) {
-  if (ms <= 0) return '00:00:00'
-  const h = Math.floor(ms / 3600000)
-  const m = Math.floor((ms % 3600000) / 60000)
-  const s = Math.floor((ms % 60000) / 1000)
-  return [h, m, s].map((n) => String(n).padStart(2, '0')).join(':')
-}
-export function getProfitClass(amount) {
-  if (amount > 0) return 'text-accent-green'
-  if (amount < 0) return 'text-accent-red'
-  return 'text-text-secondary'
-}
-export function getProfitPrefix(amount) {
-  return amount > 0 ? '+' : ''
-}
+export const formatCurrency = (amount) =>
+  new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(amount);
+
+export const formatCoins = (amount) =>
+  `${Number(amount).toFixed(2)} SC`;
+
+export const formatSteps = (steps) =>
+  new Intl.NumberFormat('en-US').format(steps);
+
+export const formatDate = (date) =>
+  format(new Date(date), 'MMM d, yyyy');
+
+export const formatDateTime = (date) =>
+  format(new Date(date), 'MMM d, yyyy h:mm a');
+
+export const formatRelative = (date) =>
+  formatDistanceToNow(new Date(date), { addSuffix: true });
+
+export const formatPercent = (value, total) =>
+  total === 0 ? '0%' : `${Math.round((value / total) * 100)}%`;
+
+export const formatCountdown = (endTime) => {
+  const now = new Date();
+  const end = new Date(endTime);
+  const diff = end - now;
+  if (diff <= 0) return '00:00:00';
+  const h = Math.floor(diff / 3600000).toString().padStart(2, '0');
+  const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
+  const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
+  return `${h}:${m}:${s}`;
+};

@@ -1,12 +1,20 @@
-import { create } from 'zustand'
+import { create } from 'zustand';
+
 export const useChallengeStore = create((set) => ({
-  challenges: [], activeBet: null, currentChallenge: null, leaderboard: [], loading: false,
+  challenges: [],
+  activeChallenge: null,
+  userBets: [],
+  isLoading: false,
+
   setChallenges: (challenges) => set({ challenges }),
-  setActiveBet: (activeBet) => set({ activeBet }),
-  setCurrentChallenge: (c) => set({ currentChallenge: c }),
-  setLeaderboard: (leaderboard) => set({ leaderboard }),
-  setLoading: (loading) => set({ loading }),
-  updateLeaderboardEntry: (entry) => set((s) => ({
-    leaderboard: s.leaderboard.map((r) => r.userId === entry.userId ? { ...r, ...entry } : r),
-  })),
-}))
+  setActiveChallenge: (challenge) => set({ activeChallenge: challenge }),
+  setUserBets: (bets) => set({ userBets: bets }),
+  setLoading: (isLoading) => set({ isLoading }),
+
+  updateChallengePool: (challengeId, pool) =>
+    set((state) => ({
+      challenges: state.challenges.map((c) =>
+        c.id === challengeId ? { ...c, totalPool: pool } : c
+      ),
+    })),
+}));

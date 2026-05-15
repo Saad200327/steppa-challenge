@@ -1,17 +1,23 @@
-import { useState, useEffect, useCallback } from 'react'
-import { walletService } from '../services/walletService'
-import { useWalletStore } from '../store/walletStore'
+import { useEffect } from 'react';
+import { useWalletStore } from '../store/walletStore';
+import { getWallet } from '../services/walletService';
 
-export function useWallet() {
-  const { wallet, transactions, setWallet, setTransactions, setLoading } = useWalletStore()
-  const fetchWallet = useCallback(async () => {
-    setLoading(true)
+export const useWallet = () => {
+  const { wallet, isLoading, setWallet, setLoading } = useWalletStore();
+
+  const fetchWallet = async () => {
+    setLoading(true);
     try {
-      const { data } = await walletService.get()
-      setWallet(data.wallet)
-      setTransactions(data.recentTransactions || [])
-    } catch {} finally { setLoading(false) }
-  }, [setWallet, setTransactions, setLoading])
-  useEffect(() => { fetchWallet() }, [fetchWallet])
-  return { wallet, transactions, fetchWallet }
-}
+      const data = await getWallet();
+      setWallet(data.wallet);
+    } catch (err) {
+      console.error('Failed to fetch wallet:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { fetchWallet(); }, []);
+
+  return { wallet, isLoading, refetch: fetchWallet };
+};
